@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Mark Sheets</title>
+</head>
+<body>
+  <h1>Student MarkSheet</h1>
+  <h3>Enter Student Roll Numbers To Findout Results</h3>
+    <label for="rollNumber">Enter Roll Number:</label>
+    <input type="number" id="rollNumber" placeholder="Enter Roll Number">
+    <button onclick="searchStudent()">Search</button>
+
+    <div id="output"></div>
+
+    <script>
+      const students = [
+    { name: "Dhishan Debnath", Roll: 1 },
+    { name: "Animesh Gupta", Roll: 2 },
+    { name: "Tapas Sen", Roll: 3 },
+    { name: "Misti Dutta", Roll: 4 },
+    { name: "Chini Misra", Roll: 5 }
+];
+
+const Details = [
+    { Roll: 5, subjects: { math: 35, english: 56, chemistry: 76, computer: 68 } },
+    { Roll: 3, subjects: { math: 33, chemistry: 12, computer: 50, english: 35 } },
+    { Roll: 1, subjects: { math: 55, english: 75, chemistry: 76, computer: 94 } },
+    { Roll: 4, subjects: { english: 12, chemistry: 85, computer: 68, math: 45 } },
+    { Roll: 2, subjects: { math: 55, english: 56, computer: 48, chemistry: 12 } }
+];
+
+const generateStudentMarkSheets = (students, details) => {
+    const studentsMarkSheets = [];
+
+    students.forEach(student => {
+        const studentDetails = details.find(detail => detail.Roll === student.Roll);
+
+        if (studentDetails) {
+            const subjects = studentDetails.subjects;
+            const total = Object.values(subjects).reduce((acc, val) => acc + val, 0);
+            const status = total >= 200 ? "pass" : "fail";
+
+            const markSheet = {
+                name: student.name,
+                Roll: student.Roll,
+                ...subjects,
+                total,
+                status
+            };
+
+            studentsMarkSheets.push(markSheet);
+        }
+    });
+
+    return studentsMarkSheets;
+};
+
+const displayStudentDetails = (studentDetails) => {
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '';
+
+    const markSheetDiv = document.createElement('div');
+    if (studentDetails) {
+        markSheetDiv.innerHTML = `
+            <p>Name: ${studentDetails.name}</p>
+            <p>Roll: ${studentDetails.Roll}</p>
+            <p>Math: ${studentDetails.math || 'N/A'}</p>
+            <p>English: ${studentDetails.english || 'N/A'}</p>
+            <p>Chemistry: ${studentDetails.chemistry || 'N/A'}</p>
+            <p>Computer: ${studentDetails.computer || 'N/A'}</p>
+            <p>Total: ${studentDetails.total || 'N/A'}</p>
+            <p>Status: ${studentDetails.status || 'N/A'}</p>
+        `;
+    } else {
+        markSheetDiv.textContent = 'Student not found';
+    }
+
+    outputDiv.appendChild(markSheetDiv);
+};
+
+const searchStudent = () => {
+    const rollNumberInput = document.getElementById('rollNumber');
+    const rollNumber = parseInt(rollNumberInput.value);
+
+    const studentDetails = generateStudentMarkSheets(students, Details).find(student => student.Roll === rollNumber);
+
+    displayStudentDetails(studentDetails);
+};
+
+    </script>
+</body>
+</html>
